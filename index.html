@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Bella y la Bestia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x.icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <form id="form" class="form">
+            <h1>🌹MI NOCHE MAGICA🌹</h1>
+            <p>
+                Hoy no solo florece una rosa... También florece mi alma.  
+                Han pasado 15 años desde que llegué al mundo, y en cada paso,  
+                en cada risa y en cada lágrima, fui creciendo, soñando…  
+                y convirtiéndome en quien soy.  
+                Esta noche no es solo una fiesta, es el reflejo de mi corazón agradecido,  
+                de cada abrazo que me sostuvo y de cada amor que me hizo brillar.  
+                Con todo mi cariño, te invito a ser parte de Mi Noche Mágica,  
+                porque en mi cuento, tú también eres parte esencial.  
+                <br>Con amor,<br>Treasy 🌹
+            </p>
+
+            <label for="nombre">NOMBRE DE INVITADO:</label>
+            <input type="text" id="nombre" name="nombre" class="box" required>
+
+            <label for="asistencia">¿Asistiré?</label>
+            <select id="asistencia" name="asistencia" class="box" required>
+                <option value="">SELECCIONA</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+            </select>
+
+            <div class="botones">
+                <button class="box-1" type="button" onclick="verUbicacion()">📍 Ver Ubicación</button>
+                <button class="box-1" type="submit">✅ Confirmar Asistencia</button>
+            </div>
+
+            <p id="respuesta"></p>
+        </form>
+
+        <div class="info">
+            <img src="images/bella.png" class="img-1" alt="">
+        </div>
+    </div>
+
+    <script>
+        function verUbicacion() {
+            window.open("https://www.google.com/maps?q=-4.9163884,-80.6828499", "_blank");
+        }
+
+        // URL de SheetDB
+        const url = "https://sheetdb.io/api/v1/iqfy7530557h2";
+
+        document.getElementById('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validar fecha límite: 27 de octubre de 2025
+            const fechaLimite = new Date('2025-10-27T23:59:59');
+            const ahora = new Date();
+            if (ahora > fechaLimite) {
+                document.getElementById('respuesta').innerText = "❌ Lo sentimos, la fecha límite para enviar el formulario ha pasado.";
+                return;
+            }
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const asistencia = document.getElementById('asistencia').value;
+
+            if (!nombre || !asistencia) {
+                document.getElementById('respuesta').innerText = "❌ Por favor, complete todos los campos.";
+                return;
+            }
+
+            const datos = {
+                data: {
+                    Nombre: nombre,
+                    Asistencia: asistencia,
+                    Fecha: new Date().toLocaleString()
+                }
+            };
+
+            try {
+                const respuesta = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await respuesta.json();
+
+                if (resultado.created) {
+                    document.getElementById('respuesta').innerText = "🌹 Gracias por formar parte de Mi Noche Mágica 🌹";
+                    document.getElementById('form').reset();
+                } else {
+                    document.getElementById('respuesta').innerText = "❌ Error al enviar datos.";
+                }
+            } catch (error) {
+                console.error("Error al enviar los datos:", error);
+                document.getElementById('respuesta').innerText = "❌ Falló la conexión con la hoja.";
+            }
+        });
+    </script>
+</body>
+</html>
